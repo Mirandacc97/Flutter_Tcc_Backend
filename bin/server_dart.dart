@@ -26,6 +26,9 @@ void main() async {
   // CORS preflight
   router.options('/usuarios', (Request request) => Response.ok(''));
   router.options('/login', (Request request) => Response.ok(''));
+  router.options('/formas-pagamento', (Request request) => Response.ok('')); // NOVO
+  router.options('/produtos', (Request request) => Response.ok('')); // NOVO
+
 
   // Cadastro de usuário
   router.post('/usuarios', (Request request) async {
@@ -43,8 +46,6 @@ void main() async {
       );
     }
 
-    insertLoginSenha(nome, senha);
-
     return Response.ok(
       jsonEncode({'mensagem': 'Usuário cadastrado com sucesso', 'nome': nome}),
       headers: {'Content-Type': 'application/json'},
@@ -58,6 +59,40 @@ void main() async {
 
     return requisicaoLogin(data['nome'], data['senha']);
   });
+
+  // --- NOVAS ROTAS ---
+
+  // Cadastro de Forma de Pagamento
+  router.post('/formas-pagamento', (Request request) async {
+    final body = await request.readAsString();
+    final data = jsonDecode(body);
+    final nome = data['nome'];
+
+    if (nome == null || nome.isEmpty) {
+      return Response.badRequest(body: 'O nome é obrigatório.');
+    }
+
+    await insertFormaPagamento(nome);
+    return Response.ok(jsonEncode({'mensagem': 'Forma de pagamento cadastrada!'}));
+  });
+
+  // Cadastro de Produto
+  router.post('/produtos', (Request request) async {
+    final body = await request.readAsString();
+    final data = jsonDecode(body);
+
+    final nome = data['nome'];
+    final tipoVenda = data['tipo_venda'];
+    final valorVenda = data['valor_venda'];
+
+    if (nome == null || tipoVenda == null || valorVenda == null) {
+      return Response.badRequest(body: 'Todos os campos são obrigatórios.');
+    }
+
+    await insertProduto(nome, tipoVenda, (valorVenda as num).toDouble());
+    return Response.ok(jsonEncode({'mensagem': 'Produto cadastrado!'}));
+  });
+
 
   final handler = const Pipeline()
       .addMiddleware(logRequests())
