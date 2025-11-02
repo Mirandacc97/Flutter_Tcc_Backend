@@ -2,8 +2,8 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
 import 'dart:convert';
-import 'WindowLogin.dart';
-import 'Dao.dart';
+import '../lib/WindowLogin.dart';
+import '../lib/Dao.dart';
 
 Middleware _corsMiddleware() {
   return (Handler innerHandler) {
