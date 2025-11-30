@@ -1,39 +1,57 @@
-//Gerenciador de Configuração (env vars)
-
 import 'dart:io' show Platform;
 
+import 'package:jaguar_jwt/jaguar_jwt.dart';
+
+// Gerenciador de Configuração
 class Config {
   final String dbHost;
   final int dbPort;
+  final String dbUsername;
+  final String dbPassword;
   final String dbName;
-  final String dbUser;
-  final String dbPass;
   final String jwtSecret;
 
+  // Construtor privado
   Config._({
     required this.dbHost,
     required this.dbPort,
+    required this.dbUsername,
+    required this.dbPassword,
     required this.dbName,
-    required this.dbUser,
-    required this.dbPass,
     required this.jwtSecret,
   });
 
-  factory Config.fromEnv() {
-    final chavePadrao = Platform.environment['JWT_SECRET'] ?? 'SUA_CHAVE_SECRETA_PADRAO_MUDE_ISSO_EM_PRODUCAO';
-
-    if (chavePadrao == 'SUA_CHAVE_SECRETA_PADRAO_MUDE_ISSO_EM_PRODUCAO') {
-      print('=' * 80);
-      print('AVISO DE SEGURANÇA: A CHAVE SECRETA (JWT_SECRET) ESTÁ USANDO O VALOR PADRÃO.');
-      print('Por favor, defina a variável de ambiente JWT_SECRET para um valor longo e seguro.');
-      print('=' * 80);
-    }
-
-    return Config._(dbHost: (Platform.environment['DB_HOST'] ?? 'localhost'),
+  // Factory para ler variáveis de ambiente e aplicar padrões
+  factory Config() {
+    return Config._(
+      dbHost: (Platform.environment['DB_HOST'] ?? 'localhost'),
       dbPort: (int.tryParse(Platform.environment['DB_PORT'] ?? '5432',) ?? 5432),
+      dbUsername: (Platform.environment['DB_USER'] ?? 'postgres'),
+      dbPassword: (Platform.environment['DB_PASS'] ?? '1234'),
       dbName: (Platform.environment['DB_NAME'] ?? 'postgres'),
-      dbUser: (Platform.environment['DB_USER'] ?? 'postgres'),
-      dbPass: (Platform.environment['DB_PASS'] ?? 'admin'),
-      jwtSecret: chavePadrao,);
+      jwtSecret: (Platform.environment['JWT_SECRET'] ?? 'bd2d53e8233f48a60c0d18910a36e648'),
+    );
+  }
+
+  // Gera a chave de segurança para o JWT
+  JwtClaimSet _claimSet(String issuer) => JwtClaimSet(
+    issuer: issuer,
+    maxAge: const Duration(days: 1),
+  );
+
+  // Gera um token
+  String gerarToken(String issuer) {
+    final claimSet = _claimSet(issuer);
+    return issueJwtHS256(claimSet, jwtSecret);
+  }
+
+  // Valida um token
+  bool validarToken(String token) {
+    try {
+      verifyJwtHS256Signature(token, jwtSecret);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

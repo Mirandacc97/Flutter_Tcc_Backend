@@ -2,7 +2,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
 import 'package:server_dart/src/database/dao.dart';
-import 'package:server_dart/src/controller/usuario_handler.dart';
+import 'package:server_dart/src/controllers/usuario_handler.dart';
 
 Middleware _corsMiddleware() {
   return (Handler innerHandler) {

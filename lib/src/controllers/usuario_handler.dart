@@ -1,4 +1,3 @@
-// lib/src/controller/usuario_handler.dart
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import '../domain/usuario_service.dart'; // Import corrigido
