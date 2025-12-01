@@ -1,7 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:jaguar_jwt/jaguar_jwt.dart';
-
 // Gerenciador de Configuração
 class Config {
   final String dbHost;
@@ -11,7 +9,6 @@ class Config {
   final String dbName;
   final String jwtSecret;
 
-  // Construtor privado
   Config._({
     required this.dbHost,
     required this.dbPort,
@@ -21,7 +18,6 @@ class Config {
     required this.jwtSecret,
   });
 
-  // Factory para ler variáveis de ambiente e aplicar padrões
   factory Config() {
     return Config._(
       dbHost: (Platform.environment['DB_HOST'] ?? 'localhost'),
