@@ -15,7 +15,7 @@ Middleware _corsMiddleware() {
     };
   };
 }
-
+//1
 void main() async { // main agora é async
   final router = Router();
   // Instancia o handler que agora cuida das rotas de usuário
