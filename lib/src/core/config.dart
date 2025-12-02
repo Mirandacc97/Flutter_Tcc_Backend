@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-// Gerenciador de Configuração
 class Config {
   final String dbHost;
   final int dbPort;
