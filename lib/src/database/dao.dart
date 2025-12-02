@@ -1,26 +1,24 @@
-// lib/src/database/dao.dart
 import 'package:postgres/postgres.dart';
-import 'schema.dart'; // Importar o novo verificador
+import 'schema.dart';
 
 final connection = PostgreSQLConnection(
   'localhost',
   5432,
-  'postgres', // Nome do seu banco
+  'postgres',
   username: 'postgres',
   password: 'admin',
 );
 
-// Agora é async para esperar a verificação do schema
 Future<void> abreConexaoComServidor() async {
   await connection.open();
   print('Conexão com o banco de dados aberta.');
 
-  // Chamar o verificador de schema APÓS abrir a conexão
-  await VerificadorSchema.verificarE_CriarTabelas(connection);
+  // Verifica e cria as tabelas necessárias
+  await VerificadorSchema.verificarECriarTabelas(connection);
 }
 
-// Classe DAO (Repositório) para isolar as queries de Usuário
 class UsuarioDao {
+  // Padronizado: parâmetro 'nome' para combinar com o SQL @nome
   Future<List<List<dynamic>>> selectLoginSenha(String nome, String senha) async {
     final results = await connection.query(
       'SELECT * FROM usuario WHERE nome = @nome AND senha = @senha',
@@ -30,10 +28,10 @@ class UsuarioDao {
     return results;
   }
 
-  Future<void> insertLoginSenha(String nome, String senha) async {
+  Future<void> insertLoginSenha(String login, String senha) async {
     await connection.query(
       'INSERT INTO usuario (nome, senha) VALUES (@nome, @senha)',
-      substitutionValues: {'nome': nome, 'senha': senha},
+      substitutionValues: {'nome': login, 'senha': senha},
     );
   }
 }
