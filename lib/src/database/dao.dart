@@ -18,11 +18,10 @@ Future<void> abreConexaoComServidor() async {
 }
 
 class UsuarioDao {
-  // Padronizado: parâmetro 'nome' para combinar com o SQL @nome
-  Future<List<List<dynamic>>> selectLoginSenha(String nome, String senha) async {
+  Future<List<List<dynamic>>> selectLoginSenha(String login, String senha) async {
     final results = await connection.query(
       'SELECT * FROM usuario WHERE nome = @nome AND senha = @senha',
-      substitutionValues: {'nome': nome, 'senha': senha},
+      substitutionValues: {'nome': login, 'senha': senha},
     );
 
     return results;
